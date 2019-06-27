@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
-	"gosports/common/entity"
-	"rsc.io/quote"
+	"gosports/gateway/config"
 )
 
 func main() {
-	test := entity.TestObject{ Id:1, Name:"test"}
-	fmt.Println(quote.Hello())
-	fmt.Println(test)
+	err := config.Init("/Users/chenpeng/working/gosports/src/conf/gateway.toml")
+	if err != nil{
+		fmt.Printf("Init config failed! err: %s", err)
+	}
+
+	conf := config.GetConfig()
+	fmt.Printf("config: %+v", conf)
 }
