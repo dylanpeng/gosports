@@ -1,21 +1,40 @@
 package ticker
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
-type Ticker struct{
-	Interval time.Duration
-	Function func()
+type Ticker struct {
+	Interval    time.Duration
+	Do          func()
+	ticker      *time.Ticker
+	stopChannel chan bool
 }
 
-func NewTicker(d time.Duration, f func()) *Ticker{
-	return &Ticker{Interval:d, Function:f}
+func NewTicker(d time.Duration, f func()) *Ticker {
+	return &Ticker{Interval: d, Do: f, ticker: time.NewTicker(d), stopChannel: make(chan bool)}
 }
 
-func (t *Ticker) Start(){
-	ticker := time.NewTicker(t.Interval)
-	go func(){
-		for _ = range ticker.C{
-			t.Function()
+func (t *Ticker) Start() {
+	go func() {
+	ForBegin:
+		for {
+			select {
+			case <-t.ticker.C:
+				t.Do()
+			case <-t.stopChannel:
+				break ForBegin
+			}
 		}
+
+		fmt.Printf("exit ticker range \n")
 	}()
+}
+
+func (t *Ticker) Stop() {
+	t.stopChannel <- true
+	t.ticker.Stop()
+
+	fmt.Printf("stop ticker \n")
 }

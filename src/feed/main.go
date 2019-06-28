@@ -3,13 +3,19 @@ package main
 import (
 	"fmt"
 	"gosports/lib/breakoff"
-	localticker "gosports/lib/ticker"
+	localTicker "gosports/lib/ticker"
 	"time"
 )
 
-func main(){
-	ticker := localticker.NewTicker(time.Second * 5, doWrite)
+func main() {
+	ticker := localTicker.NewTicker(time.Second, doWrite)
 	ticker.Start()
+
+	time.Sleep(time.Second * 5)
+	ticker.Stop()
+
+	fmt.Printf("out stop")
+
 
 	//ticker := time.NewTicker(time.Second * 5)
 	//
@@ -22,6 +28,6 @@ func main(){
 	breakoff.Breaking()
 }
 
-func doWrite(){
+func doWrite() {
 	fmt.Printf("ticker: %v \n", time.Now())
 }
