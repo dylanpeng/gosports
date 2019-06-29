@@ -27,7 +27,7 @@ func main(){
 	header["Content-Type"] = "application/json"
 	header["User-Agent"] = "ORide-driver/2.11.111"
 	body := "{\"phone_number\":\"01111122222\",\"password\":\"123456\"}"
-	rep, err = http.Requset("http://dev.api.o-pay.in/driver/login", header, consts.HttpPost, []byte(body))
+	rep, err = http.Request("http://dev.api.o-pay.in/driver/login", header, consts.HttpPost, []byte(body))
 	if err != nil{
 		fmt.Printf("request get url failed url: %s | err: %s \n", url, err)
 	}else {

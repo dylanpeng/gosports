@@ -46,7 +46,7 @@ func Post(url string, body []byte) ([]byte, error) {
 	return respBody, nil
 }
 
-func Requset(url string, header map[string]string, reqType string, body []byte) ([]byte, error) {
+func Request(url string, header map[string]string, reqType string, body []byte) ([]byte, error) {
 	req, err := http.NewRequest(reqType, url, bytes.NewReader(body))
 
 	if err != nil{
