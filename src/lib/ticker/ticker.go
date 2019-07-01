@@ -5,24 +5,30 @@ import (
 	"time"
 )
 
+type IWork interface {
+	DoWork()
+}
+
 type Ticker struct {
 	Interval    time.Duration
-	Do          func()
+	Work        IWork
 	ticker      *time.Ticker
 	stopChannel chan bool
 }
 
-func NewTicker(d time.Duration, f func()) *Ticker {
-	return &Ticker{Interval: d, Do: f, ticker: time.NewTicker(d), stopChannel: make(chan bool)}
+func NewTicker(d time.Duration, f IWork) *Ticker {
+	return &Ticker{Interval: d, Work: f, ticker: time.NewTicker(d), stopChannel: make(chan bool)}
 }
 
 func (t *Ticker) Start() {
 	go func() {
+		t.Work.DoWork()
+
 	ForBegin:
 		for {
 			select {
 			case <-t.ticker.C:
-				t.Do()
+				t.Work.DoWork()
 			case <-t.stopChannel:
 				break ForBegin
 			}

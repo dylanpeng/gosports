@@ -1,33 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"gosports/feed/works"
 	"gosports/lib/breakoff"
-	localTicker "gosports/lib/ticker"
+	"gosports/lib/ticker"
 	"time"
 )
 
 func main() {
-	ticker := localTicker.NewTicker(time.Second, doWrite)
-	ticker.Start()
+	worker := &ticker.WorkSet{}
+	worker.AddWork(time.Second*2, &works.MatchWork{})
+	worker.AddWork(time.Second*3, &works.TeamWork{})
+	worker.Start()
 
-	time.Sleep(time.Second * 5)
-	ticker.Stop()
+	time.Sleep(time.Second * 30)
 
-	fmt.Printf("out stop")
-
-
-	//ticker := time.NewTicker(time.Second * 5)
-	//
-	//go func(){
-	//	for _ = range ticker.C{
-	//		fmt.Printf("ticked at %v \n", time.Now())
-	//	}
-	//}()
+	worker.Stop()
 
 	breakoff.Breaking()
-}
-
-func doWrite() {
-	fmt.Printf("ticker: %v \n", time.Now())
 }
