@@ -8,7 +8,8 @@ database        = "gosports"
 debug           = true
 
 [works]
-match_url             = "https://live.leisu.com/saicheng?date=20190703"
-match_interval        = 10
-team_url              = "https://live.leisu.com/wanchang?date=20190702"
-team_interval         = 15
+match_url             = "https://live.leisu.com/%s?date=%s"
+match_interval        = 3600
+match_day_range       = 3
+team_url              = "https://live.leisu.com/wanchang?date=%s"
+team_interval         = 3600

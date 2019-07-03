@@ -20,6 +20,7 @@ func (c *Config) String() string {
 type WorkConfig struct {
 	MatchUrl      string `toml:"match_url"`
 	MatchInterval int64  `toml:"match_interval"`
+	MatchDayRange int    `toml:"match_day_range"`
 	TeamUrl       string `toml:"team_url"`
 	TeamInterval  int64  `toml:"team_interval"`
 }

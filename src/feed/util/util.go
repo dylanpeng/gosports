@@ -16,8 +16,8 @@ func InitWorks(conf *config.WorkConfig) {
 	Works.AddWork(time.Second*time.Duration(conf.MatchInterval),
 		&works.MatchWork{BaseWork: works.NewBaseWork(conf.MatchUrl, nil, consts.HttpGet, nil)})
 
-	Works.AddWork(time.Second*time.Duration(conf.TeamInterval),
-		&works.TeamWork{BaseWork: works.NewBaseWork(conf.TeamUrl, nil, consts.HttpGet, nil)})
+	//Works.AddWork(time.Second*time.Duration(conf.TeamInterval),
+	//	&works.TeamWork{BaseWork: works.NewBaseWork(conf.TeamUrl, nil, consts.HttpGet, nil)})
 
 	Works.Start()
 

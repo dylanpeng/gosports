@@ -8,20 +8,20 @@ import (
 
 type Client struct {
 	client  *http.Client
-	url     string
-	reqType string
-	header  map[string]string
-	body    []byte
+	Url     string
+	ReqType string
+	Header  map[string]string
+	Body    []byte
 }
 
 func (c *Client) Request() ([]byte, error) {
-	req, err := http.NewRequest(c.reqType, c.url, bytes.NewReader(c.body))
+	req, err := http.NewRequest(c.ReqType, c.Url, bytes.NewReader(c.Body))
 
 	if err != nil{
 		return nil, err
 	}
 
-	for k, v := range c.header{
+	for k, v := range c.Header{
 		req.Header.Add(k, v)
 	}
 
@@ -47,10 +47,10 @@ func (c *Client) Request() ([]byte, error) {
 func NewClient(url string, header map[string]string, reqType string, body []byte) *Client {
 	client := &Client{
 		client:  &http.Client{},
-		url:     url,
-		reqType: reqType,
-		header:  header,
-		body:    body,
+		Url:     url,
+		ReqType: reqType,
+		Header:  header,
+		Body:    body,
 	}
 
 	return client
