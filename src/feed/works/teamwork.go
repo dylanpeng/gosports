@@ -6,8 +6,15 @@ import (
 )
 
 type TeamWork struct {
+	*BaseWork
 }
 
 func (m *TeamWork) DoWork() {
-	fmt.Printf("TeamWork do time: %s \n", time.Now())
+	_, err := m.Request()
+
+	if err != nil {
+		fmt.Printf("TeamWork request failed: %s \n", err)
+	} else {
+		fmt.Printf("TeamWork request success: %s \n", time.Now())
+	}
 }
