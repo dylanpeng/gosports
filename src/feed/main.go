@@ -7,16 +7,21 @@ import (
 	"gosports/feed/config"
 	"gosports/feed/util"
 	"gosports/lib/breakoff"
+	"runtime"
 )
 
 var configFilePath = flag.String("c", "feed.toml", "config file path")
 
 func main() {
+	//parse flag
 	flag.Parse()
 
-	err := config.Init(*configFilePath)
+	// set max cpu core
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	if err != nil {
+	//init config
+	var err error
+	if err = config.Init(*configFilePath); err != nil {
 		fmt.Printf("Init config failed! err: %s \n", err)
 		return
 	}
@@ -27,9 +32,12 @@ func main() {
 		return
 	}
 
+	//init works
 	util.InitWorks(config.GetWorkConfig())
 
+	//break
 	breakoff.Breaking()
 
+	//stop works
 	util.Works.Stop()
 }
