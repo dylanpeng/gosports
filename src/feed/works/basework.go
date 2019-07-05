@@ -9,18 +9,18 @@ type BaseWork struct {
 	Client *http.Client
 }
 
-func (b *BaseWork) Request() (string, error) {
+func (b *BaseWork) Request() ([]byte, error) {
 	if b.Client == nil {
-		return "", errors.New("http Client is nil")
+		return nil, errors.New("http Client is nil")
 	}
 
 	resp, err := b.Client.Request()
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(resp), nil
+	return resp, nil
 }
 
 func NewBaseWork(url string, header map[string]string, reqType string, body []byte) *BaseWork {
