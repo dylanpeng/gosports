@@ -5,6 +5,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"gosports/common/consts"
 	"gosports/common/entity"
+	"gosports/common/model"
 	"gosports/feed/config"
 	"regexp"
 	"strconv"
@@ -29,12 +30,20 @@ func (m *MatchWork) DoWork() {
 		}
 
 		resp, err := m.Request()
-		m.GetMatches(resp, requestDate)
 		if err != nil {
 			fmt.Printf("MatchWork request failed: %s \n", err)
-		} else {
-			fmt.Printf("MatchWork request success: %s \n", m.Client.Url)
+			continue
 		}
+
+		matches, err := m.GetMatches(resp, requestDate)
+		for _, match := range matches {
+			err = model.MatchModel.AddOrUpdate(match)
+
+			if err == nil {
+				fmt.Printf("Add success. match: %+v \n", match)
+			}
+		}
+
 	}
 }
 
@@ -52,10 +61,11 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 		id, exists := selection.Attr("data-id")
 
 		if exists {
-			match.ID, err = strconv.ParseInt(id, 10, 64)
+			var innerErr error
+			match.ID, innerErr = strconv.ParseInt(id, 10, 64)
 
-			if err != nil {
-				fmt.Printf("convert id failed. err: %s \n", err)
+			if innerErr != nil {
+				fmt.Printf("convert id failed. err: %s \n", innerErr)
 				return
 			}
 		}
@@ -96,8 +106,10 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 		match.HomeTeamName = homeNode.Text()
 
 		scoreArr := strings.Split(selection.Find("span.score").First().Find("b").First().Text(), "-")
-		match.HomeScore, _ = strconv.Atoi(scoreArr[0])
-		match.AwayScore, _ = strconv.Atoi(scoreArr[1])
+		if len(scoreArr) > 1 {
+			match.HomeScore, _ = strconv.Atoi(scoreArr[0])
+			match.AwayScore, _ = strconv.Atoi(scoreArr[1])
+		}
 
 		awayNode := selection.Find("span.lab-team-away").First().Find("a").First()
 		awayHref, exists := awayNode.Attr("href")
@@ -110,8 +122,10 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 		match.AwayTeamName = awayNode.Text()
 
 		halfScoreArr := strings.Split(strings.TrimSpace(selection.Find("span.lab-half").First().Text()), "-")
-		match.HalfTimeHomeScore, _ = strconv.Atoi(halfScoreArr[0])
-		match.HalfTimeAwayScore, _ = strconv.Atoi(halfScoreArr[1])
+		if len(halfScoreArr) > 1 {
+			match.HalfTimeHomeScore, _ = strconv.Atoi(halfScoreArr[0])
+			match.HalfTimeAwayScore, _ = strconv.Atoi(halfScoreArr[1])
+		}
 
 		matchResult := selection.Find("span.lab-bet-odds").First().Find("span").First().Text()
 		switch matchResult {
@@ -125,7 +139,8 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 			match.MatchResult = consts.MatchResultNormal
 		}
 
-		fmt.Printf("%+v", *match)
+		match.CreatedTime = time.Now()
+		match.UpdatedTime = time.Now()
 		matches = append(matches, match)
 	})
 	return

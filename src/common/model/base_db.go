@@ -12,33 +12,33 @@ type baseDBModel struct {
 	writeInstance string
 }
 
-func createDBModel(writeInstance string) *baseDBModel{
-	return &baseDBModel{writeInstance:writeInstance}
+func createDBModel(writeInstance string) *baseDBModel {
+	return &baseDBModel{writeInstance: writeInstance}
 }
 
-func (b *baseDBModel) getDB() (*gorm.DB, error){
+func (b *baseDBModel) getDB() (*gorm.DB, error) {
 	return common.GetDB(b.writeInstance)
 }
 
-func (b *baseDBModel) Add(e entity.IEntity) error{
+func (b *baseDBModel) Add(e entity.IEntity) error {
 	db, err := b.getDB()
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	return db.Create(e).Error
 }
 
-func (b *baseDBModel) Get(e entity.IEntity) (exist bool, err error){
-	if !e.IsSetPrimary(){
+func (b *baseDBModel) Get(e entity.IEntity) (exist bool, err error) {
+	if !e.IsSetPrimary() {
 		err = errors.New("primary attribute is empty")
 		return
 	}
 
 	db, err := b.getDB()
 
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 
@@ -55,26 +55,26 @@ func (b *baseDBModel) Get(e entity.IEntity) (exist bool, err error){
 	return true, nil
 }
 
-func (b *baseDBModel) Update(e entity.IEntity, props map[string]interface{}) error{
-	if !e.IsSetPrimary(){
+func (b *baseDBModel) Update(e entity.IEntity, props map[string]interface{}) error {
+	if !e.IsSetPrimary() {
 		return errors.New("primary attribute is empty")
 	}
 
 	db, err := b.getDB()
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
-	if props == nil{
+	if props == nil {
 		return db.Save(e).Error
-	} else{
+	} else {
 		return db.Model(e).Update(props).Error
 	}
 }
 
-func (b *baseDBModel) Remove(e entity.IEntity) error{
-	if !e.IsSetPrimary(){
+func (b *baseDBModel) Remove(e entity.IEntity) error {
+	if !e.IsSetPrimary() {
 		return errors.New("primary attribute is empty")
 	}
 
