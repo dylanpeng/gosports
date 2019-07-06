@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"gosports/common/entity"
 	"gosports/common/method"
 )
@@ -23,6 +24,7 @@ func (m *matchModel) AddOrUpdate(match *entity.Match) error {
 
 	if !exists {
 		err = m.Add(match)
+		fmt.Printf("Add new match, %+v \n", match)
 		return err
 	}
 
@@ -30,9 +32,11 @@ func (m *matchModel) AddOrUpdate(match *entity.Match) error {
 	tempMatch.UpdatedTime = match.UpdatedTime
 
 	if method.IsTheSame(match, tempMatch) {
+		fmt.Printf("nochange don't update, %+v \n", match)
 		return nil
 	}
 
 	err = m.Update(match, nil)
+	fmt.Printf("update match, %+v \n", match)
 	return err
 }

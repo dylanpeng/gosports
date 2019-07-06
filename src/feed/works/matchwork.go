@@ -39,8 +39,8 @@ func (m *MatchWork) DoWork() {
 		for _, match := range matches {
 			err = model.MatchModel.AddOrUpdate(match)
 
-			if err == nil {
-				fmt.Printf("Add success. match: %+v \n", match)
+			if err != nil {
+				fmt.Printf("Add match failed. match: %+v \n", err)
 			}
 		}
 
@@ -84,7 +84,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 
 		match.Round, _ = strconv.Atoi(strings.TrimSpace(selection.Find("span.lab-round").First().Text()))
 
-		timeStr := strings.Split(selection.Find("span.lab-time").First().Text(), ":")
+		timeStr := strings.Split(strings.TrimSpace(selection.Find("span.lab-time").First().Text()), ":")
 		if len(timeStr) == 2 {
 			nowHour, _ := strconv.Atoi(timeStr[0])
 			nowMin, _ := strconv.Atoi(timeStr[1])
@@ -105,7 +105,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 
 		match.HomeTeamName = homeNode.Text()
 
-		scoreArr := strings.Split(selection.Find("span.score").First().Find("b").First().Text(), "-")
+		scoreArr := strings.Split(strings.TrimSpace(selection.Find("span.score").First().Find("b").First().Text()), "-")
 		if len(scoreArr) > 1 {
 			match.HomeScore, _ = strconv.Atoi(scoreArr[0])
 			match.AwayScore, _ = strconv.Atoi(scoreArr[1])
@@ -121,13 +121,13 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 
 		match.AwayTeamName = awayNode.Text()
 
-		halfScoreArr := strings.Split(strings.TrimSpace(selection.Find("span.lab-half").First().Text()), "-")
+		halfScoreArr := strings.Split(strings.TrimSpace(strings.TrimSpace(selection.Find("span.lab-half").First().Text())), "-")
 		if len(halfScoreArr) > 1 {
 			match.HalfTimeHomeScore, _ = strconv.Atoi(halfScoreArr[0])
 			match.HalfTimeAwayScore, _ = strconv.Atoi(halfScoreArr[1])
 		}
 
-		matchResult := selection.Find("span.lab-bet-odds").First().Find("span").First().Text()
+		matchResult := strings.TrimSpace(selection.Find("span.lab-bet-odds").First().Find("span").First().Text())
 		switch matchResult {
 		case "胜":
 			match.MatchResult = consts.MatchResultWin
