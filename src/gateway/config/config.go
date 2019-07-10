@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"gosports/lib/logger"
 )
 
 var config *Config
@@ -10,6 +11,7 @@ var config *Config
 type Config struct {
 	EnvConfig *EnvConfig           `toml:"env"`
 	DBConfigs map[string]*DBConfig `toml:"dbs"`
+	LogConfig *logger.Config       `toml:"log"`
 }
 
 func (c *Config) String() string {
@@ -37,6 +39,22 @@ func (c *DBConfig) String() string {
 	return fmt.Sprintf("%+v", *c)
 }
 
+func GetConfig() *Config {
+	return config
+}
+
+func GetEnvConfig() *EnvConfig {
+	return config.EnvConfig
+}
+
+func GetDBConfigs() map[string]*DBConfig {
+	return config.DBConfigs
+}
+
+func GetLogConfig() *logger.Config {
+	return config.LogConfig
+}
+
 func Init(file string) error {
 	config = &Config{}
 
@@ -45,8 +63,4 @@ func Init(file string) error {
 		return err
 	}
 	return nil
-}
-
-func GetConfig() *Config {
-	return config
 }

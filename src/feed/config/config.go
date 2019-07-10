@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"gosports/lib/gorm"
+	"gosports/lib/logger"
 )
 
 var config *Config
@@ -11,6 +12,7 @@ var config *Config
 type Config struct {
 	DBConfigs   map[string]*gorm.Config `toml:"dbs"`
 	WorkConfigs *WorkConfig             `toml:"works"`
+	LogConfig   *logger.Config          `toml:"log"`
 }
 
 func (c *Config) String() string {
@@ -42,6 +44,10 @@ func Init(file string) error {
 
 func GetConfig() *Config {
 	return config
+}
+
+func GetLogConfig() *logger.Config {
+	return config.LogConfig
 }
 
 func GetDBConfig() map[string]*gorm.Config {

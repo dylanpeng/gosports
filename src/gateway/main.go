@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"gosports/common"
 	"gosports/gateway/config"
 	"gosports/lib/breakoff"
 	"runtime"
@@ -21,10 +22,14 @@ func main() {
 	err := config.Init(*configFilePath)
 	if err != nil{
 		fmt.Printf("Init config failed! err: %s \n", err)
+		return
 	}
 
-	conf := config.GetConfig()
-	fmt.Printf("config: %+v \n", conf)
+	//init logger
+	if err = common.InitLogger(config.GetLogConfig()); err != nil{
+		fmt.Printf("Init logger failed! err: %s \n", err)
+		return
+	}
 
 	//break
 	breakoff.Breaking()

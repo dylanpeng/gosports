@@ -19,25 +19,31 @@ func main() {
 	// set max cpu core
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	//init config
+	// init config
 	var err error
 	if err = config.Init(*configFilePath); err != nil {
 		fmt.Printf("Init config failed! err: %s \n", err)
 		return
 	}
 
-	//init DB
+	// init logger
+	if err = common.InitLogger(config.GetLogConfig()); err != nil{
+		fmt.Printf("Init logger failed! err: %s \n", err)
+		return
+	}
+
+	// init DB
 	if err = common.InitDB(config.GetDBConfig()); err != nil {
 		fmt.Printf("Init DB failed! err: %s \n", err)
 		return
 	}
 
-	//init works
+	// init works
 	util.InitWorks(config.GetWorkConfig())
 
-	//break
+	// break
 	breakoff.Breaking()
 
-	//stop works
+	// stop works
 	util.Works.Stop()
 }

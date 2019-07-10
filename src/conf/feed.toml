@@ -13,3 +13,16 @@ match_interval        = 3600
 match_day_range       = 3
 team_url              = "https://live.leisu.com/wanchang?date=%s"
 team_interval         = 3600
+
+[log]
+log_filename = "./logs/feed/feed.log"
+log_file_maxsize = 100
+log_time_key = "Time"
+log_level_key = "Level"
+log_name_key = "Logger"
+log_caller_key = "Caller"
+log_message_key = "Message"
+stacktrace_key = "Stracktrace"
+log_level = "Debug"
+stacktrace_level = "Error"
+service_name = "feed"
