@@ -36,10 +36,10 @@ func (c *Config) GetZapEncoderConfig() zapcore.EncoderConfig {
 		MessageKey:     c.MessageKey,
 		StacktraceKey:  c.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder,  // Level编码器 根据level输出不同颜色
-		EncodeTime:     zapcore.ISO8601TimeEncoder,     // ISO8601 UTC 时间格式
-		EncodeDuration: zapcore.SecondsDurationEncoder, //
-		EncodeCaller:   zapcore.FullCallerEncoder,      // 全路径编码器
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder, // Level编码器 根据level输出不同颜色
+		EncodeTime:     zapcore.ISO8601TimeEncoder,       // ISO8601 UTC 时间格式
+		EncodeDuration: zapcore.SecondsDurationEncoder,   //
+		EncodeCaller:   zapcore.FullCallerEncoder,        // 全路径编码器
 		EncodeName:     zapcore.FullNameEncoder,
 	}
 }

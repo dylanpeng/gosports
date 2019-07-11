@@ -27,7 +27,7 @@ func main() {
 	}
 
 	// init logger
-	if err = common.InitLogger(config.GetLogConfig()); err != nil{
+	if err = common.InitLogger(config.GetLogConfig()); err != nil {
 		fmt.Printf("Init logger failed! err: %s \n", err)
 		return
 	}

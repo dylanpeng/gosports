@@ -7,18 +7,18 @@ import (
 	"sync"
 )
 
-type Pool struct{
-	locker sync.RWMutex
+type Pool struct {
+	locker  sync.RWMutex
 	clients map[string]*gorm.DB
 }
 
-func (p *Pool) Add(name string, c *Config) error{
+func (p *Pool) Add(name string, c *Config) error {
 	p.locker.Lock()
 	defer p.locker.Unlock()
 
 	orm, err := gorm.Open("mysql", c.GetConnectString())
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -27,13 +27,13 @@ func (p *Pool) Add(name string, c *Config) error{
 	return nil
 }
 
-func (p *Pool) Get(name string) (*gorm.DB, error){
+func (p *Pool) Get(name string) (*gorm.DB, error) {
 	p.locker.RLock()
 	defer p.locker.RUnlock()
 
 	client, ok := p.clients[name]
 
-	if ok{
+	if ok {
 		return client, nil
 	}
 
@@ -54,7 +54,7 @@ type Config struct {
 	Debug    bool   `toml:"debug"`
 }
 
-func (c *Config) GetConnectString() string{
+func (c *Config) GetConnectString() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
 		c.User, c.Password, c.Host, c.Port, c.Database, c.Charset)
 }
@@ -62,4 +62,3 @@ func (c *Config) GetConnectString() string{
 func (c *Config) String() string {
 	return fmt.Sprintf("%+v", *c)
 }
-

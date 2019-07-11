@@ -14,14 +14,14 @@ host        = "127.0.0.1"
 port        = 3306
 
 [log]
-log_filename = "./logs/gateway/gateway.log"
-log_file_maxsize = 100
-log_time_key = "Time"
-log_level_key = "Level"
-log_name_key = "Logger"
-log_caller_key = "Caller"
-log_message_key = "Message"
-stacktrace_key = "Stracktrace"
-log_level = "Debug"
-stacktrace_level = "Error"
-service_name = "gateway"
+log_filename            = "./logs/gateway/gateway.log"
+log_file_maxsize        = 100
+log_time_key            = "Time"
+log_level_key           = "Level"
+log_name_key            = "Logger"
+log_caller_key          = "Caller"
+log_message_key         = "Message"
+stacktrace_key          = "Stracktrace"
+log_level               = "Debug"
+stacktrace_level        = "Error"
+service_name            = "gateway"

@@ -12,3 +12,9 @@ const (
 	MatchResultDraw
 	MatchResultLoss
 )
+
+const(
+	MatchAdd = "Add"
+	MatchNoNeedUpdate = "No need update"
+	MatchUpdate = "Update"
+)

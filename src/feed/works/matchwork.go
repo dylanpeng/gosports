@@ -3,6 +3,8 @@ package works
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"go.uber.org/zap"
+	"gosports/common"
 	"gosports/common/consts"
 	"gosports/common/entity"
 	"gosports/common/model"
@@ -31,19 +33,24 @@ func (m *MatchWork) DoWork() {
 
 		resp, err := m.Request()
 		if err != nil {
-			fmt.Printf("MatchWork request failed: %s \n", err)
+			common.Logger.Error("MatchWork request failed.", zap.Error(err))
 			continue
 		}
 
 		matches, err := m.GetMatches(resp, requestDate)
 		for _, match := range matches {
-			err = model.MatchModel.AddOrUpdate(match)
+			msg, err := model.MatchModel.AddOrUpdate(match)
 
 			if err != nil {
-				fmt.Printf("Add match failed. match: %+v \n", err)
+				common.Logger.Error("Add match failed.", zap.Error(err))
+			} else {
+				common.Logger.Info(msg+" match success.", zap.Int64("match_id", match.ID), zap.Time("match_date", match.MatchDate),
+					zap.Int("match_status", match.MatchStatus), zap.String("home_team_name", match.HomeTeamName), zap.String("away_team_name", match.AwayTeamName),
+					zap.Int("home_score", match.HomeScore), zap.Int("away_score", match.AwayScore))
 			}
 		}
 
+		time.Sleep(time.Second * 10)
 	}
 }
 
@@ -52,7 +59,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
 
 	if err != nil {
-		fmt.Printf("goquery failed. err: %s \n", err)
+		common.Logger.Error("goquery failed.", zap.Error(err))
 		return
 	}
 
@@ -65,7 +72,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 			match.ID, innerErr = strconv.ParseInt(id, 10, 64)
 
 			if innerErr != nil {
-				fmt.Printf("convert id failed. err: %s \n", innerErr)
+				common.Logger.Error("convert id failed.", zap.Error(innerErr))
 				return
 			}
 		}
@@ -80,7 +87,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 			}
 		}
 
-		match.LeagueName = leagueNode.Find("span").First().Text()
+		match.LeagueName = strings.TrimSpace(leagueNode.Find("span").First().Text())
 
 		match.Round, _ = strconv.Atoi(strings.TrimSpace(selection.Find("span.lab-round").First().Text()))
 
@@ -103,7 +110,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 			match.HomeTeamID, _ = strconv.ParseInt(regStr[1], 10, 64)
 		}
 
-		match.HomeTeamName = homeNode.Text()
+		match.HomeTeamName = strings.TrimSpace(homeNode.Text())
 
 		scoreArr := strings.Split(strings.TrimSpace(selection.Find("span.score").First().Find("b").First().Text()), "-")
 		if len(scoreArr) > 1 {
@@ -119,7 +126,7 @@ func (m *MatchWork) GetMatches(body []byte, now time.Time) (matches []*entity.Ma
 			match.AwayTeamID, _ = strconv.ParseInt(regStr[1], 10, 64)
 		}
 
-		match.AwayTeamName = awayNode.Text()
+		match.AwayTeamName = strings.TrimSpace(awayNode.Text())
 
 		halfScoreArr := strings.Split(strings.TrimSpace(strings.TrimSpace(selection.Find("span.lab-half").First().Text())), "-")
 		if len(halfScoreArr) > 1 {
